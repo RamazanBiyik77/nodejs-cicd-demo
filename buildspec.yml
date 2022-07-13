@@ -11,16 +11,16 @@ phases:
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - REPOSITORY_URI=132248825767.dkr.ecr.eu-west-3.amazonaws.com/nodejs-apps
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-  # build:
-  #   commands:
-  #     - echo Build started on `date`
-  #     - echo Building the Docker image...
-  #     - docker build -t $REPOSITORY_URI:$IMAGE_TAG -f Dockerfile.aws .
-  # post_build:
-  #   commands:
-  #     - echo Build completed on `date`
-  #     - docker push $REPOSITORY_URI:$IMAGE_TAG
-  #     - echo Writing definitions file...
-  #     - printf '[{"name":"admin-notify","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG -f .
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing definitions file...
+      - printf '[{"name":"nodejs-test","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
